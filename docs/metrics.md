@@ -32,17 +32,3 @@ Per exercise, one point per session:
 
 Two panels on one shared x-axis rather than two y-scales on one plot: aligning
 independent scales invents a correlation that is not in the data.
-
-## Rejected metrics
-
-**Estimated 1RM** — a formula built for low-rep strength work, unreliable above
-about 10 reps, which is where most of these sets live. Not the training goal.
-
-**Weekly volume** (load × reps) — sums incomparable exercises, so one heavy RDL
-rep outweighs twenty lateral raises. On a fixed 2-set program it mostly tracks
-attendance.
-
-**Sets per muscle group** — fixed by the program's design, so nothing
-actionable. Would only earn its place with a reference band to compare against.
-
-**Personal records** — not what this program optimises for.

@@ -56,10 +56,8 @@ Ordered by what the user acts on:
 Status rules: every set at or above `hi` → add load; any set below `lo` → below range;
 nothing logged for 14 days → stale; `lo == hi` → met or below only.
 
-Deliberately **not** included, after review: estimated 1RM (formula built for low-rep
-strength work, unreliable above ~10 reps, and not the training goal), weekly volume
-(sums incomparable exercises; on a fixed 2-set program it just tracks attendance),
-sets per muscle group (fixed by program design, nothing actionable), personal records.
+Estimated 1RM was tried and dropped on purpose: the goal is not a one-rep max, and
+Epley is unreliable above ~10 reps, where most of these sets sit. Don't reintroduce it.
 
 ## Architecture
 
