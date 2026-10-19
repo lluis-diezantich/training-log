@@ -35,7 +35,8 @@ Google Sheet, two tabs. The id is not in the repo: it comes from
   zeroes 90 of 190 Pull up sets
 - **Name collisions differing only by case or trailing space**: `Calf Raises`/`Calf raises`,
   `Wall Sit`/`Wall sit`, `Meditation `, `Body weight `. Normalize with lowercase+strip
-- **Pull up `value1` is added weight**, not assistance. Effective load = bodyweight + value1.
+- **Pull up `value1` is added weight**, not assistance, so 0 or blank is a bodyweight rep.
+  The chart plots added load, not bodyweight + added.
   Evidence: within one session load rises as reps fall
 - Bodyweight is logged in `tracking`, not configured. Latest entry: 73 kg
 - Log spans 2025-01-03 → 2026-10-19, ~3,057 completed sets, 69 exercises

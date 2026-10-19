@@ -21,6 +21,12 @@
       repo secret exists
 - [ ] `gh` is authenticated as the work account only
 
+## Unverified
+- [ ] `SheetsSource` error paths (404/403/400 messages, A1 quoting) are unit
+      tested but have never hit the live API
+- [ ] Sparse-data guards in the page (no exercise with 2 sessions, no session or
+      sleep rows) are written but not checked in a browser
+
 ## Open questions
 - [ ] `valid_from 2026-10-03` in `data/raw/program.csv` is inferred from the
       earliest sets of the new exercises. Confirm the real start date

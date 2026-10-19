@@ -37,6 +37,7 @@ jobs:
           install -m 600 /dev/null "$RUNNER_TEMP/sa.json"
           # base64 is preferred: a multi-line secret makes GitHub mask every line,
           # including the bare "{" and "}", which redacts braces in unrelated logs
+          KEY="$(printf '%s' "$KEY" | tr -d '\r' | sed -e 's/^[[:space:]]*//')"
           case "$(printf '%s' "$KEY" | head -c 1)" in
             "{") printf '%s' "$KEY" > "$RUNNER_TEMP/sa.json" ;;
             *)   printf '%s' "$KEY" | base64 -d > "$RUNNER_TEMP/sa.json" ;;

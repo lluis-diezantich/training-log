@@ -26,7 +26,7 @@ line-length = 100
 src = ["src", "tests"]
 
 [tool.ruff.lint]
-select = ["E", "F", "I", "UP", "B", "SIM", "RUF"]
+select = ["E", "F", "I", "UP", "B", "SIM", "RUF", "ARG"]
 # "x" in "2x6-8" is a real multiplication sign in display strings
 ignore = ["RUF001"]
 

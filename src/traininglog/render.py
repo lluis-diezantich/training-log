@@ -26,7 +26,7 @@ def payload(
         "span": [min(dates).isoformat(), max(dates).isoformat()] if dates else ["", ""],
         "exCount": len({s.exercise.lower() for s in log.sets}),
         "program": program_panel(program, log.sets, cfg, today),
-        "exSessions": exercise_series(program, log.sets, cfg, bodyweight),
+        "exSessions": exercise_series(program, log.sets, cfg),
     }
 
 

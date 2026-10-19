@@ -30,15 +30,15 @@ def status_of(p: Prescription, last: list[Set], age: int, cfg: Config) -> str:
     if age > cfg.stale_days:
         return "stale"
     reps = [s.reps for s in last]
-    if p.lo == p.hi:
-        return "on-target" if min(reps) >= p.lo else "below-range"
-    if min(reps) >= p.hi:
+    short = bool(p.sets) and len(last) < p.sets
+    if p.lo == p.hi:  # a fixed target is met or missed, never a ceiling
+        if min(reps) < p.lo:
+            return "below-range"
+    elif min(reps) >= p.hi:
         return "add-load"
-    if min(reps) < p.lo:
+    elif min(reps) < p.lo:
         return "below-range"
-    if p.sets and len(last) < p.sets:
-        return "short-sets"
-    return "on-target"
+    return "short-sets" if short else "on-target"
 
 
 def program_panel(
@@ -73,9 +73,7 @@ def program_panel(
     return panel
 
 
-def exercise_series(
-    program: list[Prescription], sets: list[Set], cfg: Config, bodyweight: float
-) -> dict[str, dict]:
+def exercise_series(program: list[Prescription], sets: list[Set], cfg: Config) -> dict[str, dict]:
     """Per-session reps and load for each prescribed exercise, for the progression chart."""
     logged = _by_exercise(sets)
     out: dict[str, dict] = {}
@@ -84,7 +82,7 @@ def exercise_series(
         days = _sessions(entries)
         if len(days) < 2:
             continue
-        is_bw = key(p.exercise) in cfg.bodyweight_exercises
+        is_bw = key(p.exercise) in {key(x) for x in cfg.bodyweight_exercises}
         series = []
         for day in sorted(days):
             day_sets = days[day]
@@ -111,8 +109,6 @@ def exercise_series(
             "nsets": p.sets,
             "series": series,
         }
-        if is_bw:
-            out[p.exercise]["bodyweight"] = bodyweight
     return out
 
 

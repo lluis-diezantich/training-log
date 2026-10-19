@@ -14,7 +14,7 @@ data/raw/program.csv
 ```
 
 ```sh
-make build      # writes docs/index.html
+make build      # writes site/index.html
 make check      # row counts per tab
 make test
 make lint

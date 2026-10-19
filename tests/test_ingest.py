@@ -49,3 +49,31 @@ def test_program_snapshot_respects_the_as_of_date(source):
 def test_fixed_target_formats_without_a_range(program):
     wall = next(p for p in program if p.exercise == "Wall sit")
     assert wall.target == "3×30 sec"
+
+
+def test_a1_notation_survives_awkward_tab_names():
+    from traininglog.sources.sheets import SheetsSource
+
+    assert SheetsSource._a1("program") == "'program'"
+    assert SheetsSource._a1("Body weight") == "'Body weight'"
+    assert SheetsSource._a1("Bob's log") == "'Bob''s log'"
+
+
+def test_sheets_errors_say_what_to_do():
+    from traininglog.sources.sheets import _explain
+
+    assert "TRAININGLOG_SHEET_ID" in _explain(404, "tracking")
+    assert "client_email" in _explain(403, "tracking")
+    assert "'tracking'" in _explain(400, "tracking")
+    assert "500" in _explain(500, "tracking")
+
+
+def test_sheets_source_requires_an_id(cfg):
+    import dataclasses
+
+    import pytest
+
+    from traininglog.sources import build_source
+
+    with pytest.raises(RuntimeError, match="TRAININGLOG_SHEET_ID"):
+        build_source(dataclasses.replace(cfg, source="sheets", sheet_id=""))

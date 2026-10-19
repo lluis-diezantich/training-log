@@ -45,7 +45,7 @@ def test_panel_preserves_session_and_exercise_order(program, log, cfg):
 
 
 def test_series_needs_two_sessions_and_tracks_the_limiting_set(program, log, cfg):
-    series = exercise_series(program, log.sets, cfg, 73.0)
+    series = exercise_series(program, log.sets, cfg)
     assert "Never Logged" not in series
     bench = series["Bench Press"]["series"]
     assert [p["minr"] for p in bench] == [7.0, 8.0]
@@ -53,7 +53,7 @@ def test_series_needs_two_sessions_and_tracks_the_limiting_set(program, log, cfg
 
 
 def test_timed_hold_is_not_treated_as_loaded(program, log, cfg):
-    series = exercise_series(program, log.sets, cfg, 73.0)
+    series = exercise_series(program, log.sets, cfg)
     assert series["Wall sit"]["loaded"] is False
     assert series["Wall sit"]["unit"] == "sec"
 
@@ -67,6 +67,22 @@ def test_status_rules_in_isolation(program, cfg):
     assert status_of(bench, at_ceiling, 0, cfg) == "add-load"
     assert status_of(bench, mid, 0, cfg) == "on-target"
     assert status_of(bench, mid, 99, cfg) == "stale"
+
+
+def test_fixed_target_with_too_few_sets_is_short(program, cfg):
+    from traininglog.ingest import Set
+
+    wall = next(p for p in program if p.exercise == "Wall sit")
+    two_of_three = [Set(TODAY, "Wall sit", None, 30, None)] * 2
+    assert status_of(wall, two_of_three, 0, cfg) == "short-sets"
+    assert status_of(wall, two_of_three * 2, 0, cfg) == "on-target"
+
+
+def test_bodyweight_exercise_names_match_case_insensitively(program, log, cfg):
+    import dataclasses
+
+    shouty = dataclasses.replace(cfg, bodyweight_exercises=frozenset({"PULL UP"}))
+    assert exercise_series(program, log.sets, shouty)["Pull Up"]["bw"] is True
 
 
 def test_payload_has_the_keys_the_template_reads(log, program, cfg):

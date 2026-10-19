@@ -194,16 +194,18 @@ const dFull = iso => { const [y,m,d]=iso.split('-'); return +d+' '+MON[+m-1]+' '
 /* ---------- stat strip ---------- */
 const NFLAG = D.program.flatMap(s=>s.ex).filter(e=>e.status==='add-load').length;
 const last12 = D.weekly.slice(-12);
-const avgSets = last12.reduce((a,w)=>a+w.sets,0)/last12.length;
-const avgMin = D.sessions.slice(-20).reduce((a,s)=>a+s[1],0)/Math.min(20,D.sessions.length);
-$('#span').textContent = dFull(D.span[0])+' → '+dFull(D.span[1]);
+const mean = (xs, f) => xs.length ? xs.reduce((a,x)=>a+f(x),0)/xs.length : null;
+const avgSets = mean(last12, w=>w.sets);
+const avgMin = mean(D.sessions.slice(-20), s=>s[1]);
+const dash = v => (v==null || v===false) ? '-' : v;
+$('#span').textContent = D.span[0] ? dFull(D.span[0])+' → '+dFull(D.span[1]) : 'no sets logged';
 $('#footSets').textContent = D.totalSets.toLocaleString();
 $('#strip').innerHTML = [
   ['Sets logged', D.totalSets.toLocaleString(), '', D.exCount+' exercises'],
   ['Sessions', D.sessions.length, '', D.weekly.length+' weeks tracked'],
   ['At rep ceiling', NFLAG, '', NFLAG===1?'exercise needs more load':'exercises need more load'],
-  ['Sets / week', avgSets.toFixed(1), '', 'last 12 weeks'],
-  ['Session length', Math.round(avgMin), 'min', 'recent average'],
+  ['Sets / week', dash(avgSets?.toFixed(1)), '', 'last 12 weeks'],
+  ['Session length', dash(avgMin && Math.round(avgMin)), 'min', 'recent average'],
   ['Bodyweight', D.bodyweight, 'kg', 'latest entry'],
 ].map(([k,v,u,sub])=>`<div class="tile"><div class="k">${k}</div>
   <div class="v">${v}<span class="u">${u}</span></div><div class="sub">${sub}</div></div>`).join('');
@@ -264,6 +266,8 @@ const hideTT = tt => tt.style.opacity = 0;
 /* ---------- progression: reps vs target band, load stepping below ---------- */
 const EX = Object.keys(D.exSessions);
 let sel = EX[0], rangeW = 12;
+const EMPTY = '<p style="color:var(--ink-3);font-size:12.5px;margin:10px 0 0">'
+  + 'Not enough logged yet - needs two sessions.</p>';
 
 $('#liftChips').innerHTML = EX.map(k =>
   `<button data-ex="${k}" aria-pressed="${k===sel}">${k}</button>`).join('');
@@ -287,11 +291,12 @@ const nice = v => (Math.round(v*100)/100).toString();
 
 function drawProg(){
   const host=$('#progPlot'), tt=$('#tt1'), E=D.exSessions[sel];
+  if(!E){ host.innerHTML=EMPTY; $('#progDelta').textContent=''; return; }
   const cutoff = rangeW>900 ? -Infinity : epoch(D.span[1]) - rangeW*7;
   let pts = E.series.filter(p=>epoch(p.d)>=cutoff);
   if(pts.length<2) pts = E.series.slice(-Math.min(E.series.length,6));
 
-  const W=Math.max(300, host.clientWidth||640);
+  const W=host.clientWidth>0 ? host.clientWidth : 640;
   const narrow=W<470;
   const M=narrow ? {t:14,r:44,b:26,l:44} : {t:16,r:54,b:26,l:56};
   const H1=132, GAP=E.loaded?40:0, H2=E.loaded?74:0;
@@ -434,6 +439,7 @@ function drawProg(){
 
 /* ---------- sparklines ---------- */
 function spark(points, color, unit, label){
+  if(points.length<2) return `<div class="sp"><h3>${label}</h3>${EMPTY}</div>`;
   const W=300,H=60,M=4;
   const vals=points.map(p=>p[1]);
   const lo=Math.min(...vals), hi=Math.max(...vals), rng=(hi-lo)||1;
