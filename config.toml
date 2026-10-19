@@ -1,0 +1,18 @@
+# sheet_id comes from TRAININGLOG_SHEET_ID (.env locally, repo secret in CI).
+# Only needed when source = "sheets".
+sheet_id = ""
+source = "csv"          # "csv" | "sheets"
+output = "site/index.html"
+
+[tabs]
+tracking = "tracking"
+program = "program"
+
+[csv]
+tracking = "data/raw/tracking.csv"
+program = "data/raw/program.csv"
+
+[rules]
+stale_days = 14
+default_bodyweight = 73.0
+bodyweight_exercises = ["pull up", "1-arm pull up"]

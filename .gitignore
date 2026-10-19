@@ -1,0 +1,20 @@
+__pycache__/
+*.py[cod]
+.venv/
+.pytest_cache/
+.ruff_cache/
+*.egg-info/
+
+# build output, produced by CI
+site/
+
+# local sheet exports and credentials
+data/raw/*
+!data/raw/.gitkeep
+service-account*.json
+.env
+
+.DS_Store
+
+# local env
+.env

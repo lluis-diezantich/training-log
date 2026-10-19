@@ -1,0 +1,10 @@
+session,order,exercise,sets,lo,hi,unit,valid_from
+Upper,1,Bench Press,2,6,8,reps,2026-01-01
+Upper,2,Pull Up,2,6,8,reps,2026-01-01
+Lower A,1,Wall sit,3,30,30,sec,2026-01-01
+Lower A,2,Calf Raises,2,15,20,reps,2026-01-01
+Upper,1,Bench Press,2,6,8,reps,2026-10-03
+Upper,2,Pull Up,2,6,8,reps,2026-10-03
+Upper,3,Never Logged,2,8,12,reps,2026-10-03
+Lower A,1,Wall sit,3,30,30,sec,2026-10-03
+Lower A,2,Calf Raises,2,15,20,reps,2026-10-03
