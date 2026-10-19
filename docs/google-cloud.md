@@ -87,6 +87,17 @@ Both go through `uv run`, which uses the project's virtual environment. Running
 **Settings → Secrets and variables → Actions → New repository secret**, named
 `GOOGLE_SERVICE_ACCOUNT`, with the entire JSON file as the value.
 
+Prefer storing it base64-encoded:
+
+```sh
+base64 -i ~/.config/training-log/service-account.json | pbcopy
+```
+
+GitHub masks every *line* of a multi-line secret, and the JSON's first and last
+lines are a bare `{` and `}` — so storing it raw redacts every brace in your
+logs, including in unrelated tracebacks. The workflow accepts either form and
+validates that the result parses as JSON.
+
 `.github/workflows/pages.yml` already consumes it: the secret reaches the step
 as an environment variable, gets written to a `chmod 600` file under
 `RUNNER_TEMP`, and `GOOGLE_APPLICATION_CREDENTIALS` points at that path. It is

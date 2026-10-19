@@ -1,6 +1,6 @@
 <meta charset="utf-8">
 <meta name="robots" content="noindex, nofollow">
-<meta name="claude:viewport-fit-sides" content="cover">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Training Log 2025–26</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -37,8 +37,10 @@
   color-scheme:dark;
 }
 *{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+:root{padding-bottom:env(safe-area-inset-bottom,0px)}
 body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--display);
-  font-size:14px;line-height:1.5;-webkit-font-smoothing:antialiased}
+  font-size:15px;line-height:1.5;-webkit-font-smoothing:antialiased}
 body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);
   z-index:10;background:var(--panel)}
 .wrap{max-width:1080px;margin:0 auto;
@@ -84,9 +86,9 @@ button:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
 svg{display:block;max-width:100%}
 .scroll svg{max-width:none}
 .grid line{stroke:var(--line);stroke-width:1;opacity:.55}
-.axis text{font-family:var(--mono);font-size:10.5px;fill:var(--ink-3)}
+.axis text{font-family:var(--mono);font-size:11.5px;fill:var(--ink-3)}
 .axis line{stroke:var(--line);stroke-width:1}
-.lbl{font-family:var(--mono);font-size:11px;font-weight:600}
+.lbl{font-family:var(--mono);font-size:12px;font-weight:600}
 .tt{position:absolute;pointer-events:none;opacity:0;transition:opacity .09s;
   background:var(--panel);border:1px solid var(--line);border-radius:7px;padding:7px 9px;
   font-size:11.5px;box-shadow:0 5px 18px rgba(0,0,0,.13);z-index:5;min-width:96px}
@@ -120,12 +122,18 @@ svg{display:block;max-width:100%}
 .flagbar{font-size:12.5px;color:var(--ink-2);margin-bottom:18px;line-height:1.7}
 .flagbar b{color:var(--s2);font-weight:600}
 @media (max-width:560px){
-  .row{grid-template-columns:minmax(0,1fr) 70px;row-gap:1px}
-  .row .ac{grid-column:1;font-size:11.5px}
-  .row .st{grid-column:2;text-align:left;font-size:11px}
+  .row{grid-template-columns:minmax(0,1fr) 78px;row-gap:2px;padding:7px 0}
+  .row .ex{font-size:15px}
+  .row .tg{font-size:12.5px;text-align:right}
+  .row .ac{grid-column:1;font-size:13px}
+  .row .st{grid-column:2;text-align:right;font-size:12px}
+  .sess-hd{flex-wrap:wrap}
+  .sess-hd .when{margin-left:0;flex-basis:100%}
 }
 @media (max-width:420px){
-  .tile .v{font-size:21px}
+  .strip{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .tile{padding:11px 12px}
+  .tile .v{font-size:22px}
   .hdr .draft{display:none}
 }
 @media (prefers-reduced-motion:reduce){*{transition:none!important}}
@@ -283,13 +291,14 @@ function drawProg(){
   let pts = E.series.filter(p=>epoch(p.d)>=cutoff);
   if(pts.length<2) pts = E.series.slice(-Math.min(E.series.length,6));
 
-  const W=Math.max(320, host.clientWidth||640);
-  const M={t:16,r:54,b:26,l:56};
+  const W=Math.max(300, host.clientWidth||640);
+  const narrow=W<470;
+  const M=narrow ? {t:14,r:44,b:26,l:44} : {t:16,r:54,b:26,l:56};
   const H1=132, GAP=E.loaded?40:0, H2=E.loaded?74:0;
   const LTOP=M.t+H1+GAP;
   const axisLabel=(txt,cy)=>{
     const t=el('text',{class:'lbl','text-anchor':'middle',fill:css('--ink-3'),
-      transform:`translate(14,${cy}) rotate(-90)`});
+      transform:`translate(${narrow?10:14},${cy}) rotate(-90)`});
     t.textContent=txt; return t;
   };
   const H=M.t+H1+GAP+H2+M.b, pw=W-M.l-M.r;
@@ -321,7 +330,7 @@ function drawProg(){
     if(E.hi!==E.lo) svg.append(el('line',{x1:M.l,x2:M.l+pw,y1:yBot,y2:yBot,
       stroke:css('--s1'),'stroke-width':1,opacity:.28}));
     const bl=el('text',{x:M.l+pw+7,y:yTop+4,class:'lbl',fill:css('--s1'),opacity:.85});
-    bl.textContent='target'; svg.append(bl);
+    bl.textContent=narrow?'tgt':'target'; svg.append(bl);
   }
 
   const g1=el('g',{class:'grid axis'});
@@ -364,7 +373,8 @@ function drawProg(){
     svg.append(el('path',{d,fill:'none',stroke:css('--s2'),'stroke-width':2,
       'stroke-linejoin':'round'}));
     const ll=el('text',{x:lastX+8,y:lastY+4,class:'lbl',fill:css('--s2')});
-    ll.textContent=nice(pts[pts.length-1].load||0)+' kg'; svg.append(ll);
+    const loadTxt=nice(pts[pts.length-1].load||0);
+    ll.textContent=narrow?loadTxt:loadTxt+' kg'; svg.append(ll);
   }
 
   // x axis under the lowest panel
@@ -372,7 +382,7 @@ function drawProg(){
   ax.append(el('line',{x1:M.l,x2:M.l+pw,y1:base,y2:base}));
   const seen=new Set();
   pts.forEach(p=>{ const lab=dLab(p.d);
-    if(seen.has(lab)||seen.size>=6) return; seen.add(lab);
+    if(seen.has(lab)||seen.size>=(narrow?4:6)) return; seen.add(lab);
     const t=el('text',{x:X(epoch(p.d)),y:base+15,'text-anchor':'middle'});
     t.textContent=lab; ax.append(t); });
   svg.append(ax);

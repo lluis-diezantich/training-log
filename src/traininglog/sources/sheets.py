@@ -17,7 +17,7 @@ class SheetsSource:
         self._tabs = tabs
 
     def fetch(self, tab: str) -> list[Row]:
-        values = self._values(f"{self._tabs[tab]}!A:Z")
+        values = self._values(f"{self._tabs[tab]}!A:Z", tab)
         if not values:
             return []
         header = [h.strip() for h in values[0]]
@@ -27,7 +27,7 @@ class SheetsSource:
             rows.append({h: v for h, v in zip(header, padded, strict=False) if h})
         return rows
 
-    def _values(self, rng: str) -> list[list[str]]:
+    def _values(self, rng: str, tab: str) -> list[list[str]]:
         from google.oauth2 import service_account
         from googleapiclient.discovery import build
 
