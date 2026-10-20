@@ -4,10 +4,10 @@ from dataclasses import dataclass
 
 from traininglog.sources.base import Row
 
-# rows in the exercise column that are not exercises
-SESSION_MARKS = ("Workout start", "Workout end")
-DAILY = ("Sleep score", "Body weight")
-IGNORED = ("Meditation",)
+# rows in the exercise column that are not exercises, compared through key()
+SESSION_MARKS = ("workout start", "workout end")
+DAILY = ("sleep score", "body weight")
+IGNORED = ("meditation",)
 
 
 def key(name: str) -> str:
@@ -101,19 +101,20 @@ def load_log(rows: list[Row]) -> Log:
         name = row.get("exercise", "").strip()
         if not name:
             continue
+        tag = key(name)
         date = parse_date(row.get("date", ""))
         value = parse_float(row.get("value1", ""))
 
-        if name in SESSION_MARKS:
+        if tag in SESSION_MARKS:
             stamp = parse_time(row.get("date", ""))
             if date and stamp:
-                marks[date][name] = stamp
+                marks[date][tag] = stamp
             continue
-        if name.strip() in DAILY:
+        if tag in DAILY:
             if date and value is not None:
-                (sleep if name.strip() == "Sleep score" else weight).append((date, value))
+                (sleep if tag == "sleep score" else weight).append((date, value))
             continue
-        if name.strip() in IGNORED or row.get("checkbox", "").strip() != "TRUE" or not date:
+        if tag in IGNORED or row.get("checkbox", "").strip() != "TRUE" or not date:
             continue
 
         reps = parse_float(row.get("reps", ""))
@@ -142,7 +143,7 @@ def load_log(rows: list[Row]) -> Log:
 def _durations(marks: dict[dt.date, dict[str, dt.time]]) -> list[tuple[dt.date, int]]:
     out = []
     for date, pair in marks.items():
-        start, end = pair.get("Workout start"), pair.get("Workout end")
+        start, end = pair.get("workout start"), pair.get("workout end")
         if not (start and end):
             continue
         minutes = round(

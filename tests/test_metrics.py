@@ -108,3 +108,35 @@ def test_render_writes_a_noindexed_page_and_robots(log, program, cfg, tmp_path):
     out = render(payload(log, program, cfg, TODAY), tmp_path / "site" / "index.html")
     assert '<meta name="robots" content="noindex, nofollow">' in out.read_text()
     assert (out.parent / "robots.txt").read_text() == "User-agent: *\nDisallow: /\n"
+
+
+def test_too_few_sets_outranks_the_ceiling(program, cfg):
+    from traininglog.ingest import Set
+
+    bench = next(p for p in program if p.exercise == "Bench Press")
+    one_at_the_top = [Set(TODAY, "Bench Press", 60, 8, None)]
+    assert status_of(bench, one_at_the_top, 0, cfg) == "short-sets"
+
+
+def test_series_load_comes_from_the_limiting_set(program, cfg):
+    """A session mixing loads plots the limiting set, not a pairing that never happened."""
+    from traininglog.ingest import Set
+
+    sets = [
+        Set(dt.date(2026, 10, 6), "Bench Press", 60, 8, None),
+        Set(dt.date(2026, 10, 12), "Bench Press", 100, 8, None),
+        Set(dt.date(2026, 10, 12), "Bench Press", 60, 6, None),
+    ]
+    series = exercise_series(program, sets, cfg)["Bench Press"]["series"]
+    assert [(p["minr"], p["load"]) for p in series] == [(8.0, 60.0), (6.0, 60.0)]
+
+
+def test_payload_cannot_close_the_script_tag(log, program, cfg, tmp_path):
+    import dataclasses
+
+    from traininglog.render import render
+
+    sneaky = [dataclasses.replace(p, exercise="</script> Curl") for p in program]
+    page = render(payload(log, sneaky, cfg, TODAY), tmp_path / "index.html").read_text()
+    assert "</script> Curl" not in page
+    assert "<\\/script> Curl" in page

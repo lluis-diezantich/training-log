@@ -79,7 +79,7 @@ dependencies: stdlib `csv` and `tomllib` are enough at this size, and `render` i
 single string replace rather than a template engine. Google libraries are the
 `sheets` extra only.
 
-`make all` = lint, test, build. 18 tests over a hand-built fixture slice that covers
+`make all` = lint, test, build. 28 tests over a hand-built fixture slice that covers
 the traps above.
 
 `site/` is the build output and is gitignored; `docs/` is prose only. CI has two

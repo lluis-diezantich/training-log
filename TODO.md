@@ -1,12 +1,12 @@
 # TODO
 
 ## Next
-- [ ] Fix three names in the sheet's `program` tab — they still differ from the
+- [x] Fix three names in the sheet's `program` tab — they still differ from the
       `tracking` tab, so the dashboard silently drops exercises:
       `DB Wrist Curl` → `Wrist Curls`, `DB Wrist Extension` → `Wrist Extension`
       (both currently show as untracked and are hidden), and
       `Tricep Extension` → `Triceps Extension`
-- [ ] Delete the unused `TRAININGLOG_SHEET_ID` repo secret; the workflow reads
+- [x] Delete the unused `TRAININGLOG_SHEET_ID` repo secret; the workflow reads
       `GOOGLE_SHEET_ID`
 - [ ] Decide whether the dashboard should stay public. Pages serves publicly on
       Free/Pro even from a private repo, and the page carries bodyweight and

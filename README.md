@@ -19,5 +19,5 @@ see [setup](docs/setup.md).
 - [CLAUDE.md](CLAUDE.md) — project context
 - [TODO.md](TODO.md) — current status and open questions
 
-Status: builds from local CSV exports. The Sheets source and the Pages deploy
-are written but not yet working end to end.
+Status: live. CI builds from the sheet and deploys to Pages; local runs use the
+CSV exports.

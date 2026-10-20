@@ -1,6 +1,6 @@
 import datetime as dt
 
-from traininglog.ingest import key, load_program, parse_date
+from traininglog.ingest import key, load_log, load_program, parse_date
 
 
 def test_dates_are_day_first():
@@ -77,3 +77,16 @@ def test_sheets_source_requires_an_id(cfg):
 
     with pytest.raises(RuntimeError, match="TRAININGLOG_SHEET_ID"):
         build_source(dataclasses.replace(cfg, source="sheets", sheet_id=""))
+
+
+def test_non_exercise_rows_match_whatever_the_case():
+    rows = [
+        {"date": "06/10/2026 07:00:00", "exercise": "workout start", "checkbox": "TRUE"},
+        {"date": "06/10/2026 08:00:00", "exercise": "WORKOUT END", "checkbox": "TRUE"},
+        {"date": "06/10/2026", "exercise": " body weight ", "checkbox": "TRUE", "value1": "73"},
+        {"date": "06/10/2026", "exercise": "MEDITATION", "checkbox": "TRUE", "value1": "10"},
+    ]
+    out = load_log(rows)
+    assert out.sessions == [(dt.date(2026, 10, 6), 60)]
+    assert out.bodyweight == [(dt.date(2026, 10, 6), 73.0)]
+    assert out.sets == []

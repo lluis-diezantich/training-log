@@ -29,16 +29,14 @@ def _is_loaded(days: dict[dt.date, list[Set]]) -> bool:
 def status_of(p: Prescription, last: list[Set], age: int, cfg: Config) -> str:
     if age > cfg.stale_days:
         return "stale"
-    reps = [s.reps for s in last]
-    short = bool(p.sets) and len(last) < p.sets
-    if p.lo == p.hi:  # a fixed target is met or missed, never a ceiling
-        if min(reps) < p.lo:
-            return "below-range"
-    elif min(reps) >= p.hi:
-        return "add-load"
-    elif min(reps) < p.lo:
+    low = min(s.reps for s in last)
+    if low < p.lo:
         return "below-range"
-    return "short-sets" if short else "on-target"
+    if p.sets and len(last) < p.sets:
+        return "short-sets"  # an unfinished session is not evidence for more load
+    if p.lo != p.hi and low >= p.hi:  # a fixed target is met or missed, never a ceiling
+        return "add-load"
+    return "on-target"
 
 
 def program_panel(
@@ -86,15 +84,14 @@ def exercise_series(program: list[Prescription], sets: list[Set], cfg: Config) -
         series = []
         for day in sorted(days):
             day_sets = days[day]
-            reps = [s.reps for s in day_sets]
-            loads = [s.load for s in day_sets if s.load is not None]
+            # the limiting set gates adding load, so the point is that set, heaviest on a tie
+            limiting = min(day_sets, key=lambda s: (s.reps, -s.added_load))
             series.append(
                 {
                     "d": day.isoformat(),
                     "sets": [[s.load, s.reps, s.rpe] for s in day_sets],
-                    "minr": min(reps),
-                    "maxr": max(reps),
-                    "load": max(loads) if loads else None,
+                    "minr": limiting.reps,
+                    "load": limiting.load,
                 }
             )
         out[p.exercise] = {

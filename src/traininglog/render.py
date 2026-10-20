@@ -34,10 +34,8 @@ def render(data: dict, output: Path) -> Path:
     template = TEMPLATE.read_text(encoding="utf-8")
     if PLACEHOLDER not in template:
         raise ValueError(f"{TEMPLATE} is missing {PLACEHOLDER}")
+    blob = json.dumps(data, separators=(",", ":")).replace("</", "<\\/")
     output.parent.mkdir(parents=True, exist_ok=True)
-    output.write_text(
-        template.replace(PLACEHOLDER, json.dumps(data, separators=(",", ":"))),
-        encoding="utf-8",
-    )
+    output.write_text(template.replace(PLACEHOLDER, blob), encoding="utf-8")
     (output.parent / "robots.txt").write_text(ROBOTS, encoding="utf-8")
     return output
