@@ -1,13 +1,6 @@
 # TODO
 
 ## Next
-- [x] Fix three names in the sheet's `program` tab — they still differ from the
-      `tracking` tab, so the dashboard silently drops exercises:
-      `DB Wrist Curl` → `Wrist Curls`, `DB Wrist Extension` → `Wrist Extension`
-      (both currently show as untracked and are hidden), and
-      `Tricep Extension` → `Triceps Extension`
-- [x] Delete the unused `TRAININGLOG_SHEET_ID` repo secret; the workflow reads
-      `GOOGLE_SHEET_ID`
 - [ ] Decide whether the dashboard should stay public. Pages serves publicly on
       Free/Pro even from a private repo, and the page carries bodyweight and
       sleep data. `noindex` + `robots.txt` are in place, which stops search
@@ -24,3 +17,10 @@ Repo on GitHub under the personal account, history rewritten so the sheet id
 never appears in it, `.env` and pre-commit in place, both secrets set, Pages
 source on GitHub Actions, and `pages` deploying from the live sheet in ~35s.
 `SheetsSource` works end to end. Queue delays resolved themselves.
+
+2026-10-20: the three `program` tab names now match `tracking`, so no exercise is
+silently dropped, and the unused `TRAININGLOG_SHEET_ID` secret is gone. Four code
+fixes: an unfinished session reads `short-sets` instead of `add-load`; each chart
+point is one real set rather than the session's heaviest load against its worst
+reps; the payload escapes `</` before going into the `<script>`; and the
+non-exercise row names match case-insensitively.
