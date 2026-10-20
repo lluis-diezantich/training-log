@@ -19,17 +19,6 @@
 - [ ] Sparse-data guards in the page (no exercise with two sessions, no session
       or sleep rows) are written but not checked in a browser
 
-## Open questions
-- [ ] `valid_from 2026-10-03` was inferred from the earliest sets of the new
-      exercises. Confirm the real start date
-- [ ] Calf Raises: prescription says 2×15-20 but recent sets are 10 kg × 8.
-      Stale target, or wrong load?
-- [ ] Triceps Extension went 19 kg → 9.15 kg over 8 sessions while reps rose.
-      Deliberate reset, or a different implementation?
-- [ ] 91 completed rows have no reps and are dropped. Worth fixing at source?
-- [ ] Session length covers the whole workout, not one exercise. Keep the
-      sparkline or drop it?
-
 ## Done
 Repo on GitHub under the personal account, history rewritten so the sheet id
 never appears in it, `.env` and pre-commit in place, both secrets set, Pages
